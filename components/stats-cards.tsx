@@ -8,15 +8,19 @@ interface DashboardStats {
   inTransitCount: number
   pendingCount: number
 }
+interface StatsCardsProps {
+  stats: DashboardStats
+  loading?: boolean
+}
 
-export function StatsCards() {
-  const [stats, setStats] = useState<DashboardStats>({
-    totalShipments: 0,
-    deliveredCount: 0,
-    inTransitCount: 0,
-    pendingCount: 0,
-  })
-  const [loading, setLoading] = useState(true)
+export function StatsCards({ stats,  }: StatsCardsProps) {
+  // const [stats, setStats] = useState<DashboardStats>({
+  //   totalShipments: 0,
+  //   deliveredCount: 0,
+  //   inTransitCount: 0,
+  //   pendingCount: 0,
+  // })
+  // const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     fetchDashboardData()
@@ -28,12 +32,12 @@ export function StatsCards() {
       const response = await fetch("/api/dashboard")
       if (response.ok) {
         const data = await response.json()
-        setStats(data.stats)
+        // setStats(data.stats)
       }
     } catch (error) {
       console.error("Failed to fetch dashboard data:", error)
     } finally {
-      setLoading(false)
+      // setLoading(false)
     }
   }
 
@@ -72,7 +76,7 @@ export function StatsCards() {
             <h3 className="text-gray-400 text-sm font-medium">{card.title}</h3>
             <span className="text-gray-400">{card.icon}</span>
           </div>
-          <div className="text-3xl font-bold text-white mb-2">{loading ? "..." : card.value.toLocaleString()}</div>
+          {/* <div className="text-3xl font-bold text-white mb-2">{loading ? "..." : card.value.toLocaleString()}</div> */}
           <p className="text-gray-500 text-sm">{card.description}</p>
         </div>
       ))}

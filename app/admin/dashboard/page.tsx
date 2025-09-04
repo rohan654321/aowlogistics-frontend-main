@@ -1,9 +1,42 @@
+"use client"
+import { useEffect, useState } from "react"
 import { DashboardHeader } from "@/components/dashboard-header"
 import { StatsCards } from "@/components/stats-cards"
 import { OrderStatusChart } from "@/components/order-status-chart"
 import { RecentOrders } from "@/components/recent-orders"
+import { fetchDashboard, fetchShipments, Shipment } from "@/lib/api"
 
 export default function DashboardPage() {
+  const [dashboardData, setDashboardData] = useState<any>(null)
+  const [recentShipments, setRecentShipments] = useState<Shipment[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    async function loadDashboard() {
+      setLoading(true)
+      try {
+        // Fetch summary stats
+        const dashData = await fetchDashboard()
+        setDashboardData(dashData)
+
+        // Fetch recent orders/shipments
+        const shipmentsRes = await fetchShipments({ page: 1, pageSize: 5, sort: "orderDate:desc" })
+        setRecentShipments(shipmentsRes.data)
+      } catch (err: any) {
+        console.error(err)
+        setError(err.message)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadDashboard()
+  }, [])
+
+  if (loading) return <div className="p-8 text-white">Loading...</div>
+  if (error) return <div className="p-8 text-red-500">Error: {error}</div>
+
   return (
     <div className="min-h-screen bg-black text-white">
       <DashboardHeader />
@@ -17,11 +50,11 @@ export default function DashboardPage() {
         </div>
 
         <div className="grid gap-6">
-          <StatsCards />
+          <StatsCards stats={dashboardData?.stats} />
 
           <div className="grid lg:grid-cols-2 gap-6">
-            <OrderStatusChart />
-            <RecentOrders />
+            <OrderStatusChart orders={dashboardData?.orders} />
+            <RecentOrders shipments={recentShipments} />
           </div>
         </div>
       </main>

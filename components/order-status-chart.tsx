@@ -9,9 +9,14 @@ interface ChartData {
   color: string
 }
 
-export function OrderStatusChart() {
+interface OrderStatusChartProps {
+  orders: any[]
+  loading?: boolean
+}
+
+export function OrderStatusChart({ orders, loading }: OrderStatusChartProps) {
   const [chartData, setChartData] = useState<ChartData[]>([])
-  const [loading, setLoading] = useState(true)
+  // const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     fetchChartData()
@@ -62,7 +67,7 @@ export function OrderStatusChart() {
     } catch (error) {
       console.error("Failed to fetch chart data:", error)
     } finally {
-      setLoading(false)
+      // setLoading(false)
     }
   }
 

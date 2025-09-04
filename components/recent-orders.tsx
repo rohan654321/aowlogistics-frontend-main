@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { ArrowRight } from "lucide-react"
+import { Shipment } from "@/lib/api"
 
 interface RecentOrder {
   id: number
@@ -13,10 +14,14 @@ interface RecentOrder {
     name: string
   }
 }
+interface RecentOrdersProps {
+  shipments: Shipment[]
+  loading?: boolean
+}
 
-export function RecentOrders() {
+export function RecentOrders({ shipments, loading }: RecentOrdersProps) {
   const [orders, setOrders] = useState<RecentOrder[]>([])
-  const [loading, setLoading] = useState(true)
+  // const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     fetchRecentOrders()
@@ -32,7 +37,7 @@ export function RecentOrders() {
     } catch (error) {
       console.error("Failed to fetch recent orders:", error)
     } finally {
-      setLoading(false)
+      // setLoading(false)
     }
   }
 

@@ -1,6 +1,5 @@
 "use client"
 
-import { useEffect, useState } from "react"
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend } from "recharts"
 
 interface ChartData {
@@ -10,67 +9,11 @@ interface ChartData {
 }
 
 interface OrderStatusChartProps {
-  orders: any[]
+  stats: any
   loading?: boolean
 }
 
-export function OrderStatusChart({ orders, loading }: OrderStatusChartProps) {
-  const [chartData, setChartData] = useState<ChartData[]>([])
-  // const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    fetchChartData()
-  }, [])
-
-  const fetchChartData = async () => {
-    try {
-      const response = await fetch("/api/dashboard")
-      if (response.ok) {
-        const data = await response.json()
-        const stats = data.stats
-
-        const total = stats.totalShipments || 1 // Avoid division by zero
-
-        setChartData(
-          [
-            {
-              name: "In Transit",
-              value: Math.round((stats.inTransitCount / total) * 100),
-              color: "#22c55e",
-            },
-            {
-              name: "Picked Up",
-              value: Math.round(
-                ((stats.totalShipments - stats.inTransitCount - stats.deliveredCount - stats.pendingCount) / total) *
-                  100,
-              ),
-              color: "#8b5cf6",
-            },
-            {
-              name: "Delivered",
-              value: Math.round((stats.deliveredCount / total) * 100),
-              color: "#f59e0b",
-            },
-            {
-              name: "On The Way",
-              value: Math.round(((stats.inTransitCount * 0.3) / total) * 100),
-              color: "#10b981",
-            },
-            {
-              name: "Yet To Be Picked",
-              value: Math.round((stats.pendingCount / total) * 100),
-              color: "#6366f1",
-            },
-          ].filter((item) => item.value > 0),
-        ) // Only show non-zero values
-      }
-    } catch (error) {
-      console.error("Failed to fetch chart data:", error)
-    } finally {
-      // setLoading(false)
-    }
-  }
-
+export function OrderStatusChart({ stats, loading }: OrderStatusChartProps) {
   if (loading) {
     return (
       <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
@@ -81,6 +24,38 @@ export function OrderStatusChart({ orders, loading }: OrderStatusChartProps) {
       </div>
     )
   }
+
+  const total = stats?.totalShipments || 1 // Avoid division by zero
+
+  const chartData = [
+    {
+      name: "In Transit",
+      value: Math.round((stats?.inTransitCount / total) * 100),
+      color: "#22c55e",
+    },
+    {
+      name: "Picked Up",
+      value: Math.round(
+        ((stats?.totalShipments - stats?.inTransitCount - stats?.deliveredCount - stats?.pendingCount) / total) * 100,
+      ),
+      color: "#8b5cf6",
+    },
+    {
+      name: "Delivered",
+      value: Math.round((stats?.deliveredCount / total) * 100),
+      color: "#f59e0b",
+    },
+    {
+      name: "On The Way",
+      value: Math.round(((stats?.inTransitCount * 0.3) / total) * 100),
+      color: "#10b981",
+    },
+    {
+      name: "Yet To Be Picked",
+      value: Math.round((stats?.pendingCount / total) * 100),
+      color: "#6366f1",
+    },
+  ].filter((item) => item.value > 0) // Only show non-zero values
 
   return (
     <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">

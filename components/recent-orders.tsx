@@ -1,8 +1,7 @@
 "use client"
 
-import { useEffect, useState } from "react"
 import { ArrowRight } from "lucide-react"
-import { Shipment } from "@/lib/api"
+import type { Shipment } from "@/lib/api"
 
 interface RecentOrder {
   id: number
@@ -14,33 +13,13 @@ interface RecentOrder {
     name: string
   }
 }
+
 interface RecentOrdersProps {
   shipments: Shipment[]
   loading?: boolean
 }
 
 export function RecentOrders({ shipments, loading }: RecentOrdersProps) {
-  const [orders, setOrders] = useState<RecentOrder[]>([])
-  // const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    fetchRecentOrders()
-  }, [])
-
-  const fetchRecentOrders = async () => {
-    try {
-      const response = await fetch("/api/dashboard")
-      if (response.ok) {
-        const data = await response.json()
-        setOrders(data.recentShipments || [])
-      }
-    } catch (error) {
-      console.error("Failed to fetch recent orders:", error)
-    } finally {
-      // setLoading(false)
-    }
-  }
-
   const getStatusBadge = (status: string) => {
     const statusConfig = {
       yet_to_be_picked: { label: "Yet to be picked", color: "bg-yellow-500" },
@@ -68,6 +47,16 @@ export function RecentOrders({ shipments, loading }: RecentOrdersProps) {
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-GB")
   }
+
+  // Convert shipments to recent orders format
+  const orders = shipments.map((shipment) => ({
+    id: Number(shipment.id),
+    orderId: shipment.code || shipment.trackingId,
+    trackingId: shipment.trackingId,
+    order_status: shipment.status || "unknown",
+    orderDate: shipment.estimatedDelivery || new Date().toISOString(),
+    customer: shipment.customer,
+  }))
 
   return (
     <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">

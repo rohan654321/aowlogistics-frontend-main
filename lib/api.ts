@@ -38,41 +38,41 @@
   /**
    * Fetch dashboard summary from Express backend
    */
-  export async function fetchDashboard() {
-    const res = await fetch(`${API_URL}/api/dashboard`, {
-      headers: {
-        "Content-Type": "application/json",
-        ...getAuthHeaders(),
-      },
-    });
+export async function fetchDashboard() {
+  const res = await fetch(`${API_URL}/api/shipments/dashboard`, { // Changed from /api/dashboard to /api/shipments/dashboard
+    headers: {
+      "Content-Type": "application/json",
+      ...getAuthHeaders(),
+    },
+  });
 
-    if (!res.ok) {
-      throw new Error(`Failed to fetch dashboard: ${res.status} ${res.statusText}`);
-    }
-
-    const data = await res.json();
-    return data;
+  if (!res.ok) {
+    throw new Error(`Failed to fetch dashboard: ${res.status} ${res.statusText}`);
   }
+
+  const data = await res.json();
+  return data;
+}
 
   /**
    * Optional: fetch a detailed dashboard section, e.g., summary
    */
-  export async function fetchDashboardSummary() {
-    const res = await fetch(`${API_URL}/api/dashboard/summary`, {
-      headers: {
-        "Content-Type": "application/json",
-        ...getAuthHeaders(),
-      },
-    });
+export async function fetchDashboardSummary() {
+  const res = await fetch(`${API_URL}/api/shipments/dashboard/summary`, { // Changed from /api/dashboard/summary to /api/shipments/dashboard/summary
+    headers: {
+      "Content-Type": "application/json",
+      ...getAuthHeaders(),
+    },
+  });
 
-    if (!res.ok) {
-      throw new Error(`Failed to fetch dashboard summary: ${res.status} ${res.statusText}`);
-    }
-
-    const data = await res.json();
-    return data;
+  if (!res.ok) {
+    throw new Error(`Failed to fetch dashboard summary: ${res.status} ${res.statusText}`);
   }
 
+  const data = await res.json();
+  return data;
+}
+  
 
   /**
    * Helper to extract a free-text search from the Strapi-style filters

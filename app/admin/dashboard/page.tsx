@@ -4,7 +4,7 @@ import { DashboardHeader } from "@/components/dashboard-header"
 import { StatsCards } from "@/components/stats-cards"
 import { OrderStatusChart } from "@/components/order-status-chart"
 import { RecentOrders } from "@/components/recent-orders"
-import { fetchDashboard, fetchShipments, Shipment } from "@/lib/api"
+import { fetchDashboard, fetchShipments, type Shipment } from "@/lib/api"
 
 export default function DashboardPage() {
   const [dashboardData, setDashboardData] = useState<any>(null)
@@ -16,7 +16,7 @@ export default function DashboardPage() {
     async function loadDashboard() {
       setLoading(true)
       try {
-        // Fetch summary stats
+        // Fetch summary stats - use the correct endpoint
         const dashData = await fetchDashboard()
         setDashboardData(dashData)
 
@@ -24,7 +24,7 @@ export default function DashboardPage() {
         const shipmentsRes = await fetchShipments({ page: 1, pageSize: 5, sort: "orderDate:desc" })
         setRecentShipments(shipmentsRes.data)
       } catch (err: any) {
-        console.error(err)
+        console.error("Error: Failed to fetch dashboard:", err)
         setError(err.message)
       } finally {
         setLoading(false)
@@ -50,11 +50,11 @@ export default function DashboardPage() {
         </div>
 
         <div className="grid gap-6">
-          <StatsCards stats={dashboardData?.stats} />
+          <StatsCards stats={dashboardData?.stats} loading={loading} />
 
           <div className="grid lg:grid-cols-2 gap-6">
-            <OrderStatusChart orders={dashboardData?.orders} />
-            <RecentOrders shipments={recentShipments} />
+            <OrderStatusChart stats={dashboardData?.stats} loading={loading} />
+            <RecentOrders shipments={recentShipments} loading={loading} />
           </div>
         </div>
       </main>

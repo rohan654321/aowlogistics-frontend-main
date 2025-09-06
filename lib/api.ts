@@ -615,7 +615,7 @@ export async function fetchDashboardSummary() {
           phone: shipmentData.customer?.phone,
           // backend defaults: isPublished true, publishedAt now
         }),
-      })
+      })    
 
       if (!custRes.ok) {
         const err = await custRes.json().catch(() => ({}))
